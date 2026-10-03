@@ -1,0 +1,33 @@
+server:
+  port: 8761  # Eureka注册中心端口，与文档要求一致
+
+spring:
+  application:
+    name: eureka-server  # 服务名称
+
+eureka:
+  instance:
+    hostname: eureka-server  # K8s服务名
+  client:
+    # 禁止自身注册到注册中心（因为自己就是注册中心）
+    register-with-eureka: false
+    # 禁止从注册中心获取服务列表（因为自己就是注册中心）
+    fetch-registry: false
+    service-url:
+      # 注册中心地址
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    # 关闭自我保护模式，适配开发与测试环境
+    enable-self-preservation: false
+    # 清理间隔时间（毫秒）
+    eviction-interval-timer-in-ms: 5000
+
+# 日志配置
+logging:
+  level:
+    com.pythonpractice: DEBUG
+    org.springframework.cloud: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{traceId}] %logger{36} - %msg%n"
+
+

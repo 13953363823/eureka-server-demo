@@ -1,0 +1,44 @@
+server:
+  port: 8761  # Eureka注册中心端口，与文档要求一致
+
+spring:
+  application:
+    name: eureka-server  # 服务名称
+
+eureka:
+  instance:
+    hostname: eureka-server  # K8s环境中的服务名
+  client:
+    # 禁止自身注册到注册中心（因为自己就是注册中心）
+    register-with-eureka: false
+    # 禁止从注册中心获取服务列表（因为自己就是注册中心）
+    fetch-registry: false
+    service-url:
+      # 注册中心地址，使用K8s内部服务名
+      defaultZone: http://eureka-server:8761/eureka/
+  server:
+    # 关闭自我保护模式，适配开发与测试环境
+    enable-self-preservation: false
+    # 清理间隔时间（毫秒）
+    eviction-interval-timer-in-ms: 5000
+
+# 应用版本信息
+app:
+  version: "1.0.1"
+  build-time: "2024-12-19 15:30:00"
+  description: "Eureka Server - Updated for deployment"
+
+# 日志配置 - 输出到NFS共享目录，符合文档要求
+logging:
+  level:
+    com.pythonpractice: INFO
+    org.springframework.cloud: INFO
+  file:
+    # 日志输出到NFS共享目录，适配文档中Zabbix监控要求
+    path: /data/nfs/logs/eureka-server
+    name: eureka-server.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{traceId}] %logger{36} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{traceId}] %logger{36} - %msg%n"
+
+
